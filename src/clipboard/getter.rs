@@ -117,7 +117,6 @@ impl Getter<'_> {
                             ProcessState::Done
                         } else {
                             self.send_req();
-                            println!("{:?}", reply.value::<u8>());
 
                             ProcessState::ProcessLongValue
                         }
@@ -136,12 +135,21 @@ impl Getter<'_> {
 
     pub fn get(&mut self, buf: &mut Vec<u8>) {
         self.targets.restore();
+        // TODO: попробовать способ из load_wait в x11-clipboard.
+        // Очищать буфер и ждать wait_for_event + с xfixes что-то
         self.send_req();
 
         loop {
             match self.connection.poll_for_event() {
                 Some(event) => match self.process_event(event, buf) {
-                    ProcessState::Done => break,
+                    ProcessState::Done => {
+                        // don't know why, but for some applications (flameshot, for example)
+                        // clipboard does not changing without deleting previous clipboard
+                        xcb::delete_property(&self.connection, self.window, self.property);
+                        self.connection.flush();
+
+                        break;
+                    }
                     ProcessState::SkipEvent => continue,
                     ProcessState::ProcessLongValue => continue,
                     ProcessState::WrongTarget => match self.targets.roll_next() {
