@@ -9,7 +9,7 @@ pub struct Target<'a> {
 
 #[derive(Debug)]
 pub enum RollError {
-    BoundReached
+    BoundReached,
 }
 
 pub struct Targets<'a> {

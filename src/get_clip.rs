@@ -103,7 +103,7 @@ impl Getter<'_> {
                         ev_prop,
                         xcb::ATOM_ANY,
                         buf.len() as u32,
-                        std::u32::MAX // TODO: explore how it work and how to get really long replies
+                        std::u32::MAX, // TODO: explore how it work and how to get really long replies
                     )
                     .get_reply()
                     .unwrap();
@@ -139,16 +139,14 @@ impl Getter<'_> {
             match self.connection.poll_for_event() {
                 Some(event) => match self.process_event(event, buf) {
                     Result::Ok(()) => break,
-                    Result::Err(EventError::WrongTarget) => {
-                        match self.targets.roll_next() {
-                            Ok(()) => self.send_req(),
-                            Err(err) => {
-                                println!("{:?}", err);
+                    Result::Err(EventError::WrongTarget) => match self.targets.roll_next() {
+                        Ok(()) => self.send_req(),
+                        Err(err) => {
+                            println!("{:?}", err);
 
-                                break;
-                            }
+                            break;
                         }
-                    }
+                    },
                     _ => {}
                 },
                 None => {
