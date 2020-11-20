@@ -7,6 +7,11 @@ pub struct Target<'a> {
     pub name: &'a str,
 }
 
+#[derive(Debug)]
+pub enum RollError {
+    BoundReached
+}
+
 pub struct Targets<'a> {
     targets: Vec<Target<'a>>,
     cur_index: usize,
@@ -39,16 +44,20 @@ impl Targets<'_> {
         }
     }
 
-    pub fn current(&self) -> &Target {
+    pub fn get_current(&self) -> &Target {
         &self.targets[self.cur_index]
     }
 
-    pub fn roll_next(&mut self) {
-        self.cur_index += 1;
+    pub fn roll_next(&mut self) -> Result<(), RollError> {
+        if self.cur_index + 1 > self.targets.len() {
+            Err(RollError::BoundReached)
+        } else {
+            self.cur_index += 1;
+            Ok(())
+        }
     }
 
     pub fn restore(&mut self) {
         self.cur_index = 0;
     }
 }
-

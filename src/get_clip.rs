@@ -74,7 +74,7 @@ impl Getter<'_> {
             &self.connection,
             self.window,
             self.clipboard_type,
-            self.targets.current().atom,
+            self.targets.get_current().atom,
             self.property,
             xcb::CURRENT_TIME,
         );
@@ -91,37 +91,38 @@ impl Getter<'_> {
         match etype & !0x80 {
             xcb::SELECTION_NOTIFY => {
                 let eve = unsafe { xcb::cast_event::<xcb::SelectionNotifyEvent>(&event) };
-                let ev_type = eve.property();
+                let ev_prop = eve.property();
 
-                if ev_type == xcb::ATOM_NONE {
+                if ev_prop == xcb::ATOM_NONE {
                     Err(EventError::WrongTarget)
                 } else {
                     let reply = xcb::get_property(
                         &self.connection,
                         false,
                         self.window,
-                        ev_type,
+                        ev_prop,
                         xcb::ATOM_ANY,
                         buf.len() as u32,
-                        ::std::u32::MAX, // FIXME reasonable buffer size
+                        std::u32::MAX // TODO: explore how it work and how to get really long replies
                     )
                     .get_reply()
                     .unwrap();
                     // TODO: по идеи ещё нужно делать xcb::delete_property
 
                     // TODO: возможно ещё нужно добавить какой-то incr
-                    if reply.type_() != self.targets.current().atom {
+                    if reply.type_() != self.targets.get_current().atom {
                         // println!("fad: {:?}", reply.type_());
                         Err(EventError::WrongTarget)
                     } else {
                         buf.extend_from_slice(reply.value());
+                        println!("{:?}", buf);
 
                         Ok(())
                     }
                 }
             }
             xcb::PROPERTY_NOTIFY => {
-                // println!("Not yet implemented");
+                println!("Not yet implemented");
                 Err(EventError::NotYetImplemented)
             }
             _ => {
@@ -139,8 +140,14 @@ impl Getter<'_> {
                 Some(event) => match self.process_event(event, buf) {
                     Result::Ok(()) => break,
                     Result::Err(EventError::WrongTarget) => {
-                        self.targets.roll_next();
-                        self.send_req();
+                        match self.targets.roll_next() {
+                            Ok(()) => self.send_req(),
+                            Err(err) => {
+                                println!("{:?}", err);
+
+                                break;
+                            }
+                        }
                     }
                     _ => {}
                 },
@@ -153,7 +160,7 @@ impl Getter<'_> {
         }
     }
 
-    pub fn current_target_name(&self) -> &str {
-        self.targets.current().name
+    pub fn get_current_target_name(&self) -> &str {
+        self.targets.get_current().name
     }
 }
