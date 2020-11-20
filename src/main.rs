@@ -17,6 +17,7 @@ fn main() {
 
     let mut file = File::create("outasd.bin").unwrap();
     file.write_all(&prev_buf).unwrap();
+    println!("clipboard writed to file outasd.bin")
 
     // loop {
     //     std::thread::sleep(::std::time::Duration::from_millis(100));
