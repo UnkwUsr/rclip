@@ -1,13 +1,8 @@
-mod get_clip;
-mod targets;
-pub use targets::Targets;
-mod utils;
-pub use utils::intern_atom;
+mod clipboard;
+use clipboard::Getter;
 
 use std::fs::File;
 use std::io::prelude::*;
-
-use get_clip::Getter;
 
 fn main() {
     let mut getter = Getter::new();

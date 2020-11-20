@@ -1,5 +1,6 @@
-use crate::intern_atom;
-use crate::Targets;
+use super::intern_atom;
+use super::Targets;
+
 use xcb::base::Event;
 use xcb::ffi::base::xcb_generic_event_t;
 use xcb::Atom;
@@ -145,7 +146,7 @@ impl Getter<'_> {
                     ProcessState::ProcessLongValue => continue,
                     ProcessState::WrongTarget => match self.targets.roll_next() {
                         Ok(()) => self.send_req(),
-                        Err(crate::targets::RollError::BoundReached) => {
+                        Err(super::targets::RollError::BoundReached) => {
                             println!("[error] can't find target of value");
 
                             break;

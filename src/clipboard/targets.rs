@@ -1,4 +1,5 @@
-use crate::intern_atom;
+use super::intern_atom;
+
 use xcb::Atom;
 use xcb::Connection;
 
