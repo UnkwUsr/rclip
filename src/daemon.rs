@@ -28,7 +28,7 @@ impl<'a> Daemon<'a> {
             std::thread::sleep(::std::time::Duration::from_millis(100));
 
             let mut new_buf = Vec::new();
-            self.getter.get(&mut new_buf);
+            self.getter.get_wait(&mut new_buf);
 
             if new_buf == self.last_buf {
                 continue;
