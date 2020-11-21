@@ -50,7 +50,7 @@ impl Targets<'_> {
     }
 
     pub fn roll_next(&mut self) -> Result<(), RollError> {
-        if self.cur_index + 1 > self.targets.len() {
+        if self.cur_index + 1 >= self.targets.len() {
             Err(RollError::BoundReached)
         } else {
             self.cur_index += 1;
