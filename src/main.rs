@@ -1,4 +1,5 @@
 pub mod clipboard;
+pub mod history;
 
 mod daemon;
 use daemon::Daemon;

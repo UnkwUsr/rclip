@@ -1,25 +1,26 @@
 use crate::clipboard::Getter;
+use crate::history::History;
+use crate::history::HistoryEntry;
 
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::SeekFrom;
+const HISTORY_FILENAME: &str = "history.rclip";
 
+// TODO: maybe open file only once and then use them for write?
+// instead of opening each time before write
 pub struct Daemon<'a> {
     getter: Getter<'a>,
-    last_buf: Vec<u8>,
-    file: File,
+    // file: File,
+    history: History,
 }
 
 impl<'a> Daemon<'a> {
     pub fn new() -> Self {
         let getter = Getter::new();
-        let last_buf = Vec::new();
-        let file = File::create("outasd.bin").unwrap();
+        let history = History::from_file(HISTORY_FILENAME);
 
         Daemon {
             getter,
-            last_buf,
-            file,
+            // file,
+            history,
         }
     }
 
@@ -30,20 +31,18 @@ impl<'a> Daemon<'a> {
             let mut new_buf = Vec::new();
             self.getter.get_wait(&mut new_buf);
 
-            if new_buf == self.last_buf {
-                continue;
+            if let Some(prev_entry) = self.history.get_last_entry() {
+                if new_buf == prev_entry.buf {
+                    continue;
+                }
             }
 
-            self.file.set_len(0).unwrap();
-            self.file.seek(SeekFrom::Start(0)).unwrap();
-            self.file.write_all(&new_buf).unwrap();
-            // self.file.sync_all().unwrap();
-            println!(
-                "Clipboard changed. Len: {}. Writed to file outasd.bin",
-                new_buf.len()
-            );
+            println!("Clipboard changed. Len: {}", new_buf.len());
 
-            self.last_buf = new_buf;
+            let history_entry = HistoryEntry::new(new_buf);
+            self.history.push(history_entry);
+
+            self.history.write_file(HISTORY_FILENAME);
         }
     }
 }
