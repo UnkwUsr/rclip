@@ -4,10 +4,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HistoryEntry {
     pub buf: Vec<u8>,
+    target_name: String,
 }
 
 impl HistoryEntry {
-    pub fn new(buf: Vec<u8>) -> Self {
-        HistoryEntry { buf }
+    pub fn new(buf: Vec<u8>, target_name: String) -> Self {
+        HistoryEntry { buf, target_name }
     }
 }

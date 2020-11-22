@@ -15,6 +15,8 @@ impl History {
                 f.read_to_end(&mut binencoded).unwrap();
                 match bincode::deserialize(&binencoded) {
                     Ok(history) => History(history),
+                    // TODO: should expand error correct, for possible to print text of error.
+                    // Now this not work
                     Err(e) => panic!(e),
                 }
             }

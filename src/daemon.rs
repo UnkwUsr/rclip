@@ -34,7 +34,7 @@ impl<'a> Daemon<'a> {
             std::thread::sleep(::std::time::Duration::from_millis(100));
 
             let mut new_buf = Vec::new();
-            self.getter.get_wait(&mut new_buf);
+            let target_name = self.getter.get_wait(&mut new_buf);
 
             if let Some(prev_entry) = self.history.get_last_entry() {
                 if new_buf == prev_entry.buf {
@@ -44,7 +44,7 @@ impl<'a> Daemon<'a> {
 
             println!("Clipboard changed. Len: {}", new_buf.len());
 
-            let history_entry = HistoryEntry::new(new_buf);
+            let history_entry = HistoryEntry::new(new_buf, target_name);
             self.history.push(history_entry);
 
             self.history.write_file(HISTORY_FILENAME);

@@ -5,9 +5,24 @@ use xcb::Connection;
 
 // target is type of returned result. May be text, image (png, jpeg, etc), or any other for
 // example like libreoffice formatted text
-pub struct Target<'a> {
+pub struct Target {
     pub atom: Atom,
-    pub name: &'a str,
+    pub name: String,
+}
+
+impl Target {
+    pub fn new(connection: &Connection, name: &str) -> Self {
+        let atom = intern_atom(&connection, name);
+
+        Target {
+            atom,
+            name: name.to_string(),
+        }
+    }
+
+    pub fn get_name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 #[derive(Debug)]
@@ -15,20 +30,12 @@ pub enum RollError {
     BoundReached,
 }
 
-pub struct Targets<'a> {
-    targets: Vec<Target<'a>>,
+pub struct Targets {
+    targets: Vec<Target>,
     cur_index: usize,
 }
 
-impl<'a> Target<'a> {
-    pub fn new(connection: &Connection, name: &'a str) -> Self {
-        let atom = intern_atom(&connection, name);
-
-        Target { atom, name }
-    }
-}
-
-impl Targets<'_> {
+impl Targets {
     pub fn new(connection: &Connection) -> Self {
         let mut targets = Vec::new();
 

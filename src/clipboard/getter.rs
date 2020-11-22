@@ -8,7 +8,7 @@ const LEN_PROPERTY_GET: u32 = std::u32::MAX;
 
 pub struct Getter<'a> {
     ctx: &'a ClipboardCtx,
-    targets: Targets<'a>,
+    targets: Targets,
     xfixes_event_base: u8,
 }
 
@@ -132,7 +132,7 @@ impl<'a> Getter<'a> {
     }
 
     // will wait until clibpoard changed
-    pub fn get_wait(&mut self, buf: &mut Vec<u8>) {
+    pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> String {
         self.prepare_for_get();
 
         loop {
@@ -168,10 +168,7 @@ impl<'a> Getter<'a> {
                 None => continue,
             };
         }
-    }
 
-    #[allow(dead_code)]
-    pub fn get_current_target_name(&self) -> &str {
-        self.targets.get_current().name
+        self.targets.get_current().get_name()
     }
 }
