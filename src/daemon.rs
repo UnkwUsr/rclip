@@ -1,4 +1,6 @@
+use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
+use crate::clipboard::Setter;
 use crate::history::History;
 use crate::history::HistoryEntry;
 
@@ -8,17 +10,20 @@ const HISTORY_FILENAME: &str = "history.rclip";
 // instead of opening each time before write
 pub struct Daemon<'a> {
     getter: Getter<'a>,
+    setter: Setter<'a>,
     // file: File,
     history: History,
 }
 
 impl<'a> Daemon<'a> {
-    pub fn new() -> Self {
-        let getter = Getter::new();
+    pub fn new(clipboard_ctx: &'a ClipboardCtx) -> Self {
+        let getter = Getter::new(&clipboard_ctx);
+        let setter = Setter::new(&clipboard_ctx);
         let history = History::from_file(HISTORY_FILENAME);
 
         Daemon {
             getter,
+            setter,
             // file,
             history,
         }

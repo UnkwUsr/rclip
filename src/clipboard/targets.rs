@@ -3,6 +3,8 @@ use super::intern_atom;
 use xcb::Atom;
 use xcb::Connection;
 
+// target is type of returned result. May be text, image (png, jpeg, etc), or any other for
+// example like libreoffice formatted text
 pub struct Target<'a> {
     pub atom: Atom,
     pub name: &'a str,
