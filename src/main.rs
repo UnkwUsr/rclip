@@ -23,7 +23,7 @@ fn main() {
             daemon.start_loop();
         }
         _ => {
-            println!("{}", arg_matches.usage())
+            println!("{}", arg_matches.usage());
         }
     }
 }

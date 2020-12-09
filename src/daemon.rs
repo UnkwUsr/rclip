@@ -35,20 +35,18 @@ impl<'a> Daemon<'a> {
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
                     let file_name = format!(
-                        "{}/{}",
+                        "{}/{}.{}",
                         HISTORY_DIR,
                         SystemTime::now()
                             .duration_since(SystemTime::UNIX_EPOCH)
                             .unwrap()
-                            .as_millis()
+                            .as_millis(),
+                        // replace due to we can't use this symbol in file name
+                        target_name.replace("/", "\\")
                     );
                     let file_path = Path::new(&file_name);
 
                     let mut f = std::fs::File::create(file_path).unwrap();
-                    // TODO: instead of writing target_name to file,
-                    // we can just use it in file name, like "{timestamp}.{target_name}"
-                    f.write_all(target_name.as_bytes()).unwrap();
-                    f.write_all(b"\n").unwrap();
                     f.write_all(&new_buf).unwrap();
                 }
                 Err(()) => continue,
