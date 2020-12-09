@@ -132,14 +132,14 @@ impl<'a> Getter<'a> {
     }
 
     // will wait until clibpoard changed
-    pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> String {
+    pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> Result<String, ()> {
         self.prepare_for_get();
 
         loop {
             match self.ctx.connection.wait_for_event() {
                 Some(event) => match self.process_event(event, buf) {
                     ProcessState::Done => {
-                        // don't know why, but for some applications (flameshot, for example)
+                        // don't know why, but with some applications (flameshot, for example)
                         // clipboard does not changing without deleting property
                         xcb::delete_property(
                             &self.ctx.connection,
@@ -150,25 +150,32 @@ impl<'a> Getter<'a> {
 
                         break;
                     }
+                    ProcessState::WrongTarget => match self.targets.roll_next() {
+                        Ok(()) => self.send_get_req(),
+                        Err(super::targets::RollError::BoundReached) => {
+                            // empty clipboard. Probably just application that handled last
+                            // clipboard was closed
+
+                            break;
+                        }
+                    },
                     ProcessState::GettingLongValue | ProcessState::ClipboardChanged => {
                         self.send_get_req();
 
                         continue;
                     }
-                    ProcessState::WrongTarget => match self.targets.roll_next() {
-                        Ok(()) => self.send_get_req(),
-                        Err(super::targets::RollError::BoundReached) => {
-                            println!("[error] can't find target of value");
-
-                            break;
-                        }
-                    },
                     ProcessState::SkipEvent => continue,
                 },
                 None => continue,
             };
         }
 
-        self.targets.get_current().get_name()
+        let tg_name = self.targets.get_current().get_name();
+        // reached last target_name, so don't catch any of declared targets (string or img)
+        if tg_name.eq("TARGETS") {
+            Err(())
+        } else {
+            Ok(tg_name)
+        }
     }
 }

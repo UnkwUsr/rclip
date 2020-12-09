@@ -23,33 +23,36 @@ impl<'a> Daemon<'a> {
             std::thread::sleep(::std::time::Duration::from_millis(100));
 
             let mut new_buf = Vec::new();
-            let target_name = self.getter.get_wait(&mut new_buf);
+            match self.getter.get_wait(&mut new_buf) {
+                Ok(target_name) => {
+                    // TODO: search in folder to find if we already have that entry
+                    // if let Some(prev_entry) = self.history.get_last_entry() {
+                    //     if new_buf == prev_entry.buf {
+                    //         continue;
+                    //     }
+                    // }
 
-            // TODO: search in folder to find if we already have that entry
-            // if let Some(prev_entry) = self.history.get_last_entry() {
-            //     if new_buf == prev_entry.buf {
-            //         continue;
-            //     }
-            // }
+                    println!("Clipboard changed. Len: {}", new_buf.len());
 
-            println!("Clipboard changed. Len: {}", new_buf.len());
+                    let file_name = format!(
+                        "{}/{}",
+                        HISTORY_DIR,
+                        SystemTime::now()
+                            .duration_since(SystemTime::UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis()
+                    );
+                    let file_path = Path::new(&file_name);
 
-            let file_name = format!(
-                "{}/{}",
-                HISTORY_DIR,
-                SystemTime::now()
-                    .duration_since(SystemTime::UNIX_EPOCH)
-                    .unwrap()
-                    .as_millis()
-            );
-            let file_path = Path::new(&file_name);
-
-            let mut f = std::fs::File::create(file_path).unwrap();
-            // TODO: instead of writing target_name to file,
-            // we can just use it in file name, like "{timestamp}.{target_name}"
-            f.write_all(target_name.as_bytes()).unwrap();
-            f.write_all(b"\n").unwrap();
-            f.write_all(&new_buf).unwrap();
+                    let mut f = std::fs::File::create(file_path).unwrap();
+                    // TODO: instead of writing target_name to file,
+                    // we can just use it in file name, like "{timestamp}.{target_name}"
+                    f.write_all(target_name.as_bytes()).unwrap();
+                    f.write_all(b"\n").unwrap();
+                    f.write_all(&new_buf).unwrap();
+                }
+                Err(()) => continue,
+            };
         }
     }
 }

@@ -45,8 +45,8 @@ impl Targets {
         let png = Target::new(connection, "image/png");
         targets.push(png);
 
-        // let mut target = intern_atom!("TARGETS");
-        // let mut target = intern_atom!("STRING");
+        let request_targets_list = Target::new(connection, "TARGETS");
+        targets.push(request_targets_list);
 
         Targets {
             cur_index: 0,
