@@ -1,32 +1,21 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
-use crate::clipboard::Setter;
-use crate::history::History;
-use crate::history::HistoryEntry;
+use std::io::Write;
+use std::path::Path;
+use std::time::SystemTime;
 
-const HISTORY_FILENAME: &str = "history.rclip";
+const HISTORY_DIR: &str = "rclips";
 
-// TODO: maybe open file only once and then use them for write?
-// instead of opening each time before write
 pub struct Daemon<'a> {
     getter: Getter<'a>,
-    setter: Setter<'a>,
-    // file: File,
-    history: History,
 }
 
 impl<'a> Daemon<'a> {
     pub fn new(clipboard_ctx: &'a ClipboardCtx) -> Self {
         let getter = Getter::new(&clipboard_ctx);
-        let setter = Setter::new(&clipboard_ctx);
-        let history = History::from_file(HISTORY_FILENAME);
+        std::fs::create_dir_all(HISTORY_DIR).unwrap();
 
-        Daemon {
-            getter,
-            setter,
-            // file,
-            history,
-        }
+        Daemon { getter }
     }
 
     pub fn start_loop(&mut self) {
@@ -36,18 +25,31 @@ impl<'a> Daemon<'a> {
             let mut new_buf = Vec::new();
             let target_name = self.getter.get_wait(&mut new_buf);
 
-            if let Some(prev_entry) = self.history.get_last_entry() {
-                if new_buf == prev_entry.buf {
-                    continue;
-                }
-            }
+            // TODO: search in folder to find if we already have that entry
+            // if let Some(prev_entry) = self.history.get_last_entry() {
+            //     if new_buf == prev_entry.buf {
+            //         continue;
+            //     }
+            // }
 
             println!("Clipboard changed. Len: {}", new_buf.len());
 
-            let history_entry = HistoryEntry::new(new_buf, target_name);
-            self.history.push(history_entry);
+            let file_name = format!(
+                "{}/{}",
+                HISTORY_DIR,
+                SystemTime::now()
+                    .duration_since(SystemTime::UNIX_EPOCH)
+                    .unwrap()
+                    .as_millis()
+            );
+            let file_path = Path::new(&file_name);
 
-            self.history.write_file(HISTORY_FILENAME);
+            let mut f = std::fs::File::create(file_path).unwrap();
+            // TODO: instead of writing target_name to file,
+            // we can just use it in file name, like "{timestamp}.{target_name}"
+            f.write_all(target_name.as_bytes()).unwrap();
+            f.write_all(b"\n").unwrap();
+            f.write_all(&new_buf).unwrap();
         }
     }
 }
