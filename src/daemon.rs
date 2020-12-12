@@ -4,6 +4,11 @@ use std::io::Write;
 use std::path::Path;
 use std::time::SystemTime;
 
+use signal_hook::{iterator::Signals, SIGUSR1};
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+
 const HISTORY_DIR: &str = "rclips";
 
 pub struct Daemon<'a> {
@@ -19,6 +24,16 @@ impl<'a> Daemon<'a> {
     }
 
     pub fn start_loop(&mut self) {
+        let dooneskip = Arc::new(AtomicBool::new(false));
+        let dooneskip_shared = dooneskip.clone();
+
+        let signals = Signals::new(&[SIGUSR1]).unwrap();
+        std::thread::spawn(move || {
+            for _ in signals.forever() {
+                dooneskip_shared.store(true, Ordering::Release);
+            }
+        });
+
         loop {
             std::thread::sleep(::std::time::Duration::from_millis(100));
 
@@ -31,6 +46,18 @@ impl<'a> Daemon<'a> {
                     //         continue;
                     //     }
                     // }
+
+                    if dooneskip.load(Ordering::Relaxed) {
+                        println!("skip due to 'set from history'");
+                        dooneskip.store(false, Ordering::Release);
+                        continue;
+                    }
+
+                    // TODO: add config setting 'length of minimum clip'
+                    if new_buf.is_empty() {
+                        println!("skip due to 'too short'");
+                        continue;
+                    }
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 

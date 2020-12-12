@@ -8,6 +8,7 @@ use clipboard::ClipboardCtx;
 use daemon::Daemon;
 
 fn main() {
+    // TODO: detect if another program instanec already launched
     let arg_matches = App::new("rclip")
         .version("0.1.0")
         .author("UnkwUsr <ktoto2707043 at gmail dot cum>")

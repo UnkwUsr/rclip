@@ -76,7 +76,27 @@ name = "rclip"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "signal-hook",
  "xcb",
+]
+
+[[package]]
+name = "signal-hook"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cbae917d5719a9884206132a443899e8c9056b48a156233a823417b39f34044f"
+dependencies = [
+ "libc",
+ "signal-hook-registry",
+]
+
+[[package]]
+name = "signal-hook-registry"
+version = "1.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce32ea0c6c56d5eacaeb814fbed9960547021d3edd010ded1425f180536b20ab"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

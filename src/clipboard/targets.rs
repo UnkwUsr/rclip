@@ -39,6 +39,8 @@ impl Targets {
     pub fn new(connection: &Connection) -> Self {
         let mut targets = Vec::new();
 
+        // TODO: add config setting 'known_targets'
+
         let utf8 = Target::new(connection, "UTF8_STRING");
         targets.push(utf8);
 
