@@ -1,15 +1,13 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
 use std::io::Write;
-use std::path::Path;
-use std::time::SystemTime;
 
 use signal_hook::{iterator::Signals, SIGUSR1};
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-const HISTORY_DIR: &str = "rclips";
+pub const HISTORY_FILE: &str = "history.rclips";
 
 pub struct Daemon<'a> {
     getter: Getter<'a>,
@@ -18,7 +16,6 @@ pub struct Daemon<'a> {
 impl<'a> Daemon<'a> {
     pub fn new(clipboard_ctx: &'a ClipboardCtx) -> Self {
         let getter = Getter::new(&clipboard_ctx);
-        std::fs::create_dir_all(HISTORY_DIR).unwrap();
 
         Daemon { getter }
     }
@@ -61,20 +58,17 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
-                    let file_name = format!(
-                        "{}/{}.{}",
-                        HISTORY_DIR,
-                        SystemTime::now()
-                            .duration_since(SystemTime::UNIX_EPOCH)
-                            .unwrap()
-                            .as_millis(),
-                        // replace due to we can't use this symbol in file name
-                        target_name.replace("/", "\\")
-                    );
-                    let file_path = Path::new(&file_name);
-
-                    let mut f = std::fs::File::create(file_path).unwrap();
+                    let mut f = std::fs::OpenOptions::new()
+                        .append(true)
+                        .create(true)
+                        .open(HISTORY_FILE)
+                        .unwrap();
+                    f.write_all(target_name.as_bytes()).unwrap();
+                    f.write_all(&[b'\n']).unwrap();
+                    f.write_all(new_buf.len().to_string().as_bytes()).unwrap();
+                    f.write_all(&[b'\n']).unwrap();
                     f.write_all(&new_buf).unwrap();
+                    f.write_all(&[b'\n']).unwrap();
                 }
                 Err(()) => continue,
             };
