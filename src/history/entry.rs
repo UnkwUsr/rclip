@@ -1,7 +1,7 @@
-use std::io::BufReader;
-use std::io::BufRead;
-use std::io::Read;
 use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
+use std::io::Read;
 // TODO: store images in separate file
 pub struct HistoryEntry {
     pub buf: Vec<u8>,
@@ -36,11 +36,11 @@ impl HistoryEntry {
 }
 
 impl std::fmt::Display for HistoryEntry {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(),std::fmt::Error> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
         let mut v = self.buf.clone();
         for x in &mut v {
             if *x == b'\n' {
-               *x = b' '
+                *x = b' '
             }
         }
         write!(f, "{}", String::from_utf8(v).unwrap())?;

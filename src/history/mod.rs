@@ -24,11 +24,9 @@ impl History {
         for (i, x) in self.0.iter().enumerate() {
             println!("{} {}", i, x);
         }
-
     }
 
     pub fn print_by_id(&self, id: usize) {
         eprint!("{}", self.0[id]);
     }
 }
-

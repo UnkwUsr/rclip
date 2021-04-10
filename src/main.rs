@@ -1,7 +1,7 @@
 use clap::{App, SubCommand};
 use std::io::Read;
 
-pub mod clipboard;
+mod clipboard;
 mod daemon;
 mod history;
 
@@ -17,7 +17,10 @@ fn main() {
         .about("Clipboard manager written in Rust")
         // .arg(Arg::with_name("daemon").short("d").long("daemon").help("Run daemon of clipboard manager"))
         .subcommand(SubCommand::with_name("daemon").about("Run daemon of clipboard manager"))
-        .subcommand(SubCommand::with_name("list_and_set").about("Print list of clips and then set picked by id"))
+        .subcommand(
+            SubCommand::with_name("list_and_set")
+                .about("Print list of clips and then set picked by id"),
+        )
         .get_matches();
 
     match arg_matches.subcommand() {
