@@ -28,7 +28,7 @@ impl History {
     }
 
     pub fn print_by_id(&self, id: usize) {
-        println!("{}", self.0[id]);
+        eprintln!("{}", self.0[id]);
     }
 }
 

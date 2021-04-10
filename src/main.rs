@@ -45,8 +45,6 @@ fn main() {
             // println!("{}", buf);
             let resi: usize = buf.parse().unwrap();
             history.print_by_id(resi);
-
-
         }
         _ => {
             println!("{}", arg_matches.usage());
