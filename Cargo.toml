@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 clap = "2.33.3"
 signal-hook = "0.2.1"
+dirs = "3.0.1"
 
 [dependencies.xcb]
 version = "0.9.0"

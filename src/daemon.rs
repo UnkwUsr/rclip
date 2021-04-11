@@ -7,17 +7,30 @@ use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+pub const HISTORY_DIR: &str = ".rclip";
 pub const HISTORY_FILE: &str = "history.rclips";
 
 pub struct Daemon<'a> {
     getter: Getter<'a>,
+    history_dir_path: String,
+    history_file_path: String,
 }
 
 impl<'a> Daemon<'a> {
     pub fn new(clipboard_ctx: &'a ClipboardCtx) -> Self {
         let getter = Getter::new(&clipboard_ctx);
 
-        Daemon { getter }
+        let history_dir_path = format!("{}/{}", dirs::home_dir().unwrap().display(), HISTORY_DIR);
+
+        std::fs::create_dir_all(&history_dir_path).unwrap();
+
+        let history_file_path = format!("{}/{}", history_dir_path, HISTORY_FILE);
+
+        Daemon {
+            getter,
+            history_dir_path,
+            history_file_path,
+        }
     }
 
     pub fn start_loop(&mut self) {
@@ -58,10 +71,11 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
-                    // TODO: do check for non-text target
+                    // TODO: do check for non-text target and for all non-text save entry per file
                     if target_name == "image/png" {
                         let filepathstring = format!(
-                            "by_target_name/{}/{}",
+                            "{}/by_target_name/{}/{}",
+                            self.history_dir_path,
                             target_name,
                             SystemTime::now()
                                 .duration_since(UNIX_EPOCH)
@@ -81,7 +95,7 @@ impl<'a> Daemon<'a> {
                         let mut f = std::fs::OpenOptions::new()
                             .append(true)
                             .create(true)
-                            .open(HISTORY_FILE)
+                            .open(&self.history_file_path)
                             .unwrap();
                         f.write_all(target_name.as_bytes()).unwrap();
                         f.write_all(&[b'\n']).unwrap();
