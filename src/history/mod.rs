@@ -22,7 +22,8 @@ impl History {
 
     pub fn print(&self) {
         for (i, x) in self.0.iter().enumerate() {
-            println!("{} {}", i, x);
+            // use alerante format for entry for print text in one line
+            println!("{} {:#}", i, x);
         }
     }
 
