@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::Read;
-// TODO: store images in separate file
+
 pub struct HistoryEntry {
     pub buf: Vec<u8>,
     pub target_name: String,

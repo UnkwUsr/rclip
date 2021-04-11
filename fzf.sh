@@ -5,6 +5,9 @@ RCLIP_EXE="cargo run -q"
 mkfifo asdd
 mkfifo res_to_copy
 
+# send a signal to rclip that now we will set entry from history
+pkill -SIGUSR1 rclip
+
 # will wait until something will be printed to res_to_copy, and then pipe it to
 # xclip. We need to do that BEFORE run rclip, because named pipe res_to_copy
 # must be ready to read before we will write something to it

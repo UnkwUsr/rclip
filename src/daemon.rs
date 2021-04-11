@@ -1,11 +1,11 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
-use std::io::Write;
-
 use signal_hook::{iterator::Signals, SIGUSR1};
+use std::io::Write;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub const HISTORY_FILE: &str = "history.rclips";
 
@@ -58,17 +58,38 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
-                    let mut f = std::fs::OpenOptions::new()
-                        .append(true)
-                        .create(true)
-                        .open(HISTORY_FILE)
-                        .unwrap();
-                    f.write_all(target_name.as_bytes()).unwrap();
-                    f.write_all(&[b'\n']).unwrap();
-                    f.write_all(new_buf.len().to_string().as_bytes()).unwrap();
-                    f.write_all(&[b'\n']).unwrap();
-                    f.write_all(&new_buf).unwrap();
-                    f.write_all(&[b'\n']).unwrap();
+                    // TODO: do check for non-text target
+                    if target_name == "image/png" {
+                        let filepathstring = format!(
+                            "by_target_name/{}/{}",
+                            target_name,
+                            SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .unwrap()
+                                .as_millis(),
+                        );
+                        let filepath = std::path::Path::new(&filepathstring);
+                        std::fs::create_dir_all(filepath.parent().unwrap()).unwrap();
+                        let mut f = std::fs::OpenOptions::new()
+                            .write(true)
+                            .create(true)
+                            .open(filepath)
+                            .unwrap();
+                        f.write_all(&new_buf).unwrap();
+                        // TODO: write entry about this image to general history file
+                    } else {
+                        let mut f = std::fs::OpenOptions::new()
+                            .append(true)
+                            .create(true)
+                            .open(HISTORY_FILE)
+                            .unwrap();
+                        f.write_all(target_name.as_bytes()).unwrap();
+                        f.write_all(&[b'\n']).unwrap();
+                        f.write_all(new_buf.len().to_string().as_bytes()).unwrap();
+                        f.write_all(&[b'\n']).unwrap();
+                        f.write_all(&new_buf).unwrap();
+                        f.write_all(&[b'\n']).unwrap();
+                    }
                 }
                 Err(()) => continue,
             };
