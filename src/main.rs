@@ -4,10 +4,12 @@ use std::io::Read;
 mod clipboard;
 mod daemon;
 mod history;
+mod paths;
 
 use clipboard::ClipboardCtx;
 use daemon::Daemon;
 use history::History;
+use paths::Paths;
 
 fn main() {
     // TODO: detect if another program instanec already launched
@@ -23,14 +25,16 @@ fn main() {
         )
         .get_matches();
 
+    let paths = Paths::new();
+
     match arg_matches.subcommand() {
         ("daemon", Some(_)) => {
             let clipboard_ctx = ClipboardCtx::new();
-            let mut daemon = Daemon::new(&clipboard_ctx);
+            let mut daemon = Daemon::new(&paths, &clipboard_ctx);
             daemon.start_loop();
         }
         ("list_and_set", Some(_)) => {
-            let history = History::from_file(daemon::HISTORY_FILE);
+            let history = History::from_file(&paths.history_file_path);
             history.print();
 
             let mut buf = String::new();

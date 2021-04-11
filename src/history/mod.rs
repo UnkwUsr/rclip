@@ -9,6 +9,7 @@ impl History {
         let mut v: Vec<HistoryEntry> = Vec::new();
         let f = std::fs::OpenOptions::new()
             .read(true)
+            // not found error can't happen because we create that file in module Paths
             .open(filename)
             .unwrap();
 

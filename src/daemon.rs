@@ -1,5 +1,6 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
+use crate::Paths;
 use signal_hook::{iterator::Signals, SIGUSR1};
 use std::io::Write;
 use std::sync::atomic::AtomicBool;
@@ -7,30 +8,16 @@ use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub const HISTORY_DIR: &str = ".rclip";
-pub const HISTORY_FILE: &str = "history.rclips";
-
 pub struct Daemon<'a> {
     getter: Getter<'a>,
-    history_dir_path: String,
-    history_file_path: String,
+    paths: &'a Paths,
 }
 
 impl<'a> Daemon<'a> {
-    pub fn new(clipboard_ctx: &'a ClipboardCtx) -> Self {
+    pub fn new(paths: &'a Paths, clipboard_ctx: &'a ClipboardCtx) -> Self {
         let getter = Getter::new(&clipboard_ctx);
 
-        let history_dir_path = format!("{}/{}", dirs::home_dir().unwrap().display(), HISTORY_DIR);
-
-        std::fs::create_dir_all(&history_dir_path).unwrap();
-
-        let history_file_path = format!("{}/{}", history_dir_path, HISTORY_FILE);
-
-        Daemon {
-            getter,
-            history_dir_path,
-            history_file_path,
-        }
+        Daemon { getter, paths }
     }
 
     pub fn start_loop(&mut self) {
@@ -75,7 +62,7 @@ impl<'a> Daemon<'a> {
                     if target_name == "image/png" {
                         let filepathstring = format!(
                             "{}/by_target_name/{}/{}",
-                            self.history_dir_path,
+                            self.paths.history_dir_path,
                             target_name,
                             SystemTime::now()
                                 .duration_since(UNIX_EPOCH)
@@ -95,7 +82,7 @@ impl<'a> Daemon<'a> {
                         let mut f = std::fs::OpenOptions::new()
                             .append(true)
                             .create(true)
-                            .open(&self.history_file_path)
+                            .open(&self.paths.history_file_path)
                             .unwrap();
                         f.write_all(target_name.as_bytes()).unwrap();
                         f.write_all(&[b'\n']).unwrap();
