@@ -8,8 +8,10 @@ pkill -SIGUSR1 ^rclip$
 
 # will wait until something will be printed to res_to_copy, and then pipe it to
 # xclip. We need to do that BEFORE run rclip, because named pipe res_to_copy
-# must be ready to read before we will write something to it
-xclip -sel c < /tmp/res_to_copy &
+# must be ready to read before we will write something to it.
+# nohup need to leave process running in the background (useful when call
+# script by hotkey)
+nohup xclip -sel c < /tmp/res_to_copy > /dev/null &
 
 # set asdd as stdin for rclip (that will be used for get picked index of entry)
 # redirect rclip stderr to res_to_copy (that will be used for
