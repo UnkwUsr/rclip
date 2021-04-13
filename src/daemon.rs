@@ -12,13 +12,18 @@ use std::time::{SystemTime, UNIX_EPOCH};
 pub struct Daemon<'a> {
     getter: Getter<'a>,
     paths: &'a Paths,
+    config: &'a Config,
 }
 
 impl<'a> Daemon<'a> {
-    pub fn new(config: &Config, paths: &'a Paths, clipboard_ctx: &'a ClipboardCtx) -> Self {
+    pub fn new(config: &'a Config, paths: &'a Paths, clipboard_ctx: &'a ClipboardCtx) -> Self {
         let getter = Getter::new(config, &clipboard_ctx);
 
-        Daemon { getter, paths }
+        Daemon {
+            config,
+            getter,
+            paths,
+        }
     }
 
     pub fn start_loop(&mut self) {
@@ -51,8 +56,7 @@ impl<'a> Daemon<'a> {
                         continue;
                     }
 
-                    // TODO: add config setting 'length of minimum clip'
-                    if new_buf.is_empty() {
+                    if new_buf.len() < self.config.min_length {
                         println!("skip due to 'too short'");
                         continue;
                     }

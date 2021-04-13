@@ -6,7 +6,7 @@ use std::io::prelude::*;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub known_targets: Vec<String>,
-    pub min_length: u32,
+    pub min_length: usize,
 }
 
 impl Config {
