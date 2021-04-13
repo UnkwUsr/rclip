@@ -1,6 +1,6 @@
 use super::ClipboardCtx;
 use super::Targets;
-
+use crate::config::Config;
 use xcb::base::Event;
 use xcb::ffi::base::xcb_generic_event_t;
 
@@ -21,8 +21,8 @@ pub enum ProcessState {
 }
 
 impl<'a> Getter<'a> {
-    pub fn new(ctx: &'a ClipboardCtx) -> Self {
-        let targets = Targets::new(&ctx.connection);
+    pub fn new(config: &Config, ctx: &'a ClipboardCtx) -> Self {
+        let targets = Targets::new(&ctx.connection, &config.known_targets);
 
         let xfixes = xcb::query_extension(&ctx.connection, "XFIXES")
             .get_reply()

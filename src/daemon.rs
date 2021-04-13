@@ -1,5 +1,6 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
+use crate::config::Config;
 use crate::Paths;
 use signal_hook::{iterator::Signals, SIGUSR1};
 use std::io::Write;
@@ -14,8 +15,8 @@ pub struct Daemon<'a> {
 }
 
 impl<'a> Daemon<'a> {
-    pub fn new(paths: &'a Paths, clipboard_ctx: &'a ClipboardCtx) -> Self {
-        let getter = Getter::new(&clipboard_ctx);
+    pub fn new(config: &Config, paths: &'a Paths, clipboard_ctx: &'a ClipboardCtx) -> Self {
+        let getter = Getter::new(config, &clipboard_ctx);
 
         Daemon { getter, paths }
     }

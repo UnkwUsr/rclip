@@ -36,16 +36,13 @@ pub struct Targets {
 }
 
 impl Targets {
-    pub fn new(connection: &Connection) -> Self {
+    pub fn new(connection: &Connection, known_targets: &Vec<String>) -> Self {
         let mut targets = Vec::new();
 
-        // TODO: add config setting 'known_targets'
-
-        let utf8 = Target::new(connection, "UTF8_STRING");
-        targets.push(utf8);
-
-        let png = Target::new(connection, "image/png");
-        targets.push(png);
+        for target_name in known_targets {
+            let target = Target::new(connection, &target_name);
+            targets.push(target);
+        }
 
         let request_targets_list = Target::new(connection, "TARGETS");
         targets.push(request_targets_list);

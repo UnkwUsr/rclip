@@ -33,7 +33,7 @@ fn main() {
     match arg_matches.subcommand() {
         ("daemon", Some(_)) => {
             let clipboard_ctx = ClipboardCtx::new();
-            let mut daemon = Daemon::new(&paths, &clipboard_ctx);
+            let mut daemon = Daemon::new(&config, &paths, &clipboard_ctx);
             daemon.start_loop();
         }
         ("list_and_set", Some(_)) => {
