@@ -1,5 +1,6 @@
 use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
+use crate::clipboard::GetterError;
 use crate::config::Config;
 use crate::Paths;
 use signal_hook::{iterator::Signals, SIGUSR1};
@@ -97,7 +98,9 @@ impl<'a> Daemon<'a> {
                         f.write_all(&[b'\n']).unwrap();
                     }
                 }
-                Err(()) => continue,
+                Err(GetterError::UnknownTarget) => {
+                    println!("Unknown target. Check setting 'known_targets' in config.")
+                }
             };
         }
     }

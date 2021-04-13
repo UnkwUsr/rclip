@@ -12,6 +12,10 @@ pub struct Getter<'a> {
     xfixes_event_base: u8,
 }
 
+pub enum GetterError {
+    UnknownTarget,
+}
+
 pub enum ProcessState {
     Done,
     WrongTarget,
@@ -132,7 +136,7 @@ impl<'a> Getter<'a> {
     }
 
     // will wait until clibpoard changed
-    pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> Result<String, ()> {
+    pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> Result<String, GetterError> {
         self.prepare_for_get();
 
         loop {
@@ -173,7 +177,7 @@ impl<'a> Getter<'a> {
         let tg_name = self.targets.get_current().get_name();
         // reached last target_name, so don't catch any of declared targets (string or img)
         if tg_name.eq("TARGETS") {
-            Err(())
+            Err(GetterError::UnknownTarget)
         } else {
             Ok(tg_name)
         }
