@@ -2,11 +2,13 @@ use clap::{App, SubCommand};
 use std::io::Read;
 
 mod clipboard;
+mod config;
 mod daemon;
 mod history;
 mod paths;
 
 use clipboard::ClipboardCtx;
+use config::Config;
 use daemon::Daemon;
 use history::History;
 use paths::Paths;
@@ -26,6 +28,7 @@ fn main() {
         .get_matches();
 
     let paths = Paths::new();
+    let config = Config::new(&paths);
 
     match arg_matches.subcommand() {
         ("daemon", Some(_)) => {
