@@ -64,11 +64,10 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
-                    // TODO: do check for non-text target and for all non-text save entry per file
-                    if target_name == "image/png" {
+                    if self.config.other_targets.contains(&target_name) {
                         let filepathstring = format!(
-                            "{}/by_target_name/{}/{}",
-                            self.paths.history_dir_path,
+                            "{}/{}/{}",
+                            self.paths.other_targets_dir_path,
                             target_name,
                             SystemTime::now()
                                 .duration_since(UNIX_EPOCH)
@@ -76,7 +75,6 @@ impl<'a> Daemon<'a> {
                                 .as_millis(),
                         );
                         let filepath = std::path::Path::new(&filepathstring);
-                        std::fs::create_dir_all(filepath.parent().unwrap()).unwrap();
                         let mut f = std::fs::OpenOptions::new()
                             .write(true)
                             .create(true)

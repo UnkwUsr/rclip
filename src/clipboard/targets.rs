@@ -1,5 +1,5 @@
 use super::intern_atom;
-
+use crate::config::Config;
 use xcb::Atom;
 use xcb::Connection;
 
@@ -36,10 +36,14 @@ pub struct Targets {
 }
 
 impl Targets {
-    pub fn new(connection: &Connection, known_targets: &Vec<String>) -> Self {
+    pub fn new(connection: &Connection, config: &Config) -> Self {
         let mut targets = Vec::new();
 
-        for target_name in known_targets {
+        for target_name in &config.text_targets {
+            let target = Target::new(connection, &target_name);
+            targets.push(target);
+        }
+        for target_name in &config.other_targets {
             let target = Target::new(connection, &target_name);
             targets.push(target);
         }

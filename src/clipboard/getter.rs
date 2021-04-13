@@ -26,7 +26,7 @@ pub enum ProcessState {
 
 impl<'a> Getter<'a> {
     pub fn new(config: &Config, ctx: &'a ClipboardCtx) -> Self {
-        let targets = Targets::new(&ctx.connection, &config.known_targets);
+        let targets = Targets::new(&ctx.connection, config);
 
         let xfixes = xcb::query_extension(&ctx.connection, "XFIXES")
             .get_reply()

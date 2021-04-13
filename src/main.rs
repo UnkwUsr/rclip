@@ -29,6 +29,7 @@ fn main() {
 
     let paths = Paths::new();
     let config = Config::new(&paths);
+    paths.create_other_targets_dirs(&config);
 
     match arg_matches.subcommand() {
         ("daemon", Some(_)) => {
