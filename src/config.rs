@@ -1,4 +1,3 @@
-// use serde_derive::Deserialize;
 use crate::Paths;
 use serde::{Deserialize, Serialize};
 use std::io::prelude::*;

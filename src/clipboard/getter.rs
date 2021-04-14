@@ -78,7 +78,8 @@ impl<'a> Getter<'a> {
                     ProcessState::SkipEvent
                 }
                 _ => {
-                    unreachable!("what is it?")
+                    println!("unknown etype {}", etype);
+                    ProcessState::SkipEvent
                 }
             }
         }
