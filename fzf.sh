@@ -18,7 +18,7 @@ nohup xclip -sel c < /tmp/res_to_copy > /dev/null &
 #    getting original text entry)
 # redirect rclip stdout to fzf
 # redirect fzf stdout to asdd (that used for send index of picked entry to rclip)
-rclip list_and_set < /tmp/asdd 2> /tmp/res_to_copy | fzf --with-nth 2.. > /tmp/asdd
+rclip list_and_set < /tmp/asdd 2> /tmp/res_to_copy | fzf --tac --with-nth 2.. > /tmp/asdd
 
 rm /tmp/asdd
 rm /tmp/res_to_copy
