@@ -44,12 +44,7 @@ impl<'a> Daemon<'a> {
             let mut new_buf = Vec::new();
             match self.getter.get_wait(&mut new_buf) {
                 Ok(target_name) => {
-                    // TODO: search in folder to find if we already have that entry
-                    // if let Some(prev_entry) = self.history.get_last_entry() {
-                    //     if new_buf == prev_entry.buf {
-                    //         continue;
-                    //     }
-                    // }
+                    // TODO: check for duplicates
 
                     if dooneskip.load(Ordering::Relaxed) {
                         println!("skip due to 'set from history'");
@@ -64,15 +59,21 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
+                    let mut history_file = std::fs::OpenOptions::new()
+                        .append(true)
+                        .create(true)
+                        .open(&self.paths.history_file_path)
+                        .unwrap();
+
                     if self.config.other_targets.contains(&target_name) {
+                        let filename = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis()
+                            .to_string();
                         let filepathstring = format!(
                             "{}/{}/{}",
-                            self.paths.other_targets_dir_path,
-                            target_name,
-                            SystemTime::now()
-                                .duration_since(UNIX_EPOCH)
-                                .unwrap()
-                                .as_millis(),
+                            self.paths.other_targets_dir_path, target_name, filename,
                         );
                         let filepath = std::path::Path::new(&filepathstring);
                         let mut f = std::fs::OpenOptions::new()
@@ -81,23 +82,31 @@ impl<'a> Daemon<'a> {
                             .open(filepath)
                             .unwrap();
                         f.write_all(&new_buf).unwrap();
-                        // TODO: write entry about this image to general history file
-                    } else {
-                        let mut f = std::fs::OpenOptions::new()
-                            .append(true)
-                            .create(true)
-                            .open(&self.paths.history_file_path)
+
+                        history_file
+                            .write_all(
+                                format!(
+                                    "{} {} {}\n{}",
+                                    target_name,
+                                    filename.len(),
+                                    "!",
+                                    filename.to_string()
+                                )
+                                .as_bytes(),
+                            )
                             .unwrap();
-                        f.write_all(target_name.as_bytes()).unwrap();
-                        f.write_all(&[b'\n']).unwrap();
-                        f.write_all(new_buf.len().to_string().as_bytes()).unwrap();
-                        f.write_all(&[b'\n']).unwrap();
-                        f.write_all(&new_buf).unwrap();
-                        f.write_all(&[b'\n']).unwrap();
+                    } else {
+                        history_file
+                            .write_all(format!("{} {}\n", target_name, new_buf.len()).as_bytes())
+                            .unwrap();
+                        history_file.write_all(&new_buf).unwrap();
                     }
+
+                    // print new line after history entry
+                    history_file.write_all(&[b'\n']).unwrap();
                 }
                 Err(GetterError::UnknownTarget) => {
-                    println!("Unknown target. Check setting 'known_targets' in config.")
+                    println!("Unknown target. Check settings 'text_targets' and 'other_targets' in config.")
                 }
             };
         }

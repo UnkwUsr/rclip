@@ -14,7 +14,7 @@ impl History {
             .unwrap();
 
         let mut bufreader = BufReader::new(f);
-        while let Some(entry) = HistoryEntry::read_next(&mut bufreader) {
+        while let Some(entry) = HistoryEntry::next_from_bufreader(&mut bufreader) {
             v.push(entry);
         }
 
