@@ -53,9 +53,14 @@ fn main() {
                     break;
                 }
             }
-            // println!("{}", buf);
-            let resi: usize = buf.parse().unwrap();
-            history.print_by_id(resi);
+
+            if let Ok(resi) = buf.parse::<usize>() {
+                if let Ok(_) = history.print_by_id(resi) {
+                    return;
+                }
+            }
+            eprintln!("Error: wrong index");
+            std::process::exit(1);
         }
         _ => {
             println!("{}", arg_matches.usage());

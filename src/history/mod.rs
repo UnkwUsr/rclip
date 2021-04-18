@@ -23,12 +23,17 @@ impl History {
 
     pub fn print(&self) {
         for (i, x) in self.0.iter().enumerate() {
-            // use alerante format for entry for print text in one line
+            // use alerante format for entry for print all text in one line
             println!("{} {:#}", i, x);
         }
     }
 
-    pub fn print_by_id(&self, id: usize) {
-        eprint!("{}", self.0[id]);
+    pub fn print_by_id(&self, id: usize) -> Result<(), ()> {
+        if id > self.0.len() {
+            Err(())
+        } else {
+            eprint!("{}", self.0[id]);
+            Ok(())
+        }
     }
 }
