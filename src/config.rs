@@ -4,8 +4,7 @@ use std::io::prelude::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub text_targets: Vec<String>,
-    pub other_targets: Vec<String>,
+    pub targets_list: Vec<String>,
     pub min_length: usize,
 }
 
@@ -34,8 +33,7 @@ impl Config {
 
     fn default() -> Self {
         Config {
-            text_targets: ["UTF8_STRING".to_owned()].to_vec(),
-            other_targets: ["image/png".to_owned()].to_vec(),
+            targets_list: ["image/png".to_owned(), "UTF8_STRING".to_owned()].to_vec(),
             min_length: 3,
         }
     }

@@ -59,54 +59,25 @@ impl<'a> Daemon<'a> {
 
                     println!("Clipboard changed. Len: {}", new_buf.len());
 
-                    let mut history_file = std::fs::OpenOptions::new()
-                        .append(true)
+                    let filename = SystemTime::now()
+                        .duration_since(UNIX_EPOCH)
+                        .unwrap()
+                        .as_millis()
+                        .to_string();
+                    let filepathstring = format!(
+                        "{}/{}/{}",
+                        self.paths.history_dir_path, target_name, filename,
+                    );
+                    let filepath = std::path::Path::new(&filepathstring);
+                    let mut f = std::fs::OpenOptions::new()
+                        .write(true)
                         .create(true)
-                        .open(&self.paths.history_file_path)
+                        .open(filepath)
                         .unwrap();
-
-                    if self.config.other_targets.contains(&target_name) {
-                        let filename = SystemTime::now()
-                            .duration_since(UNIX_EPOCH)
-                            .unwrap()
-                            .as_millis()
-                            .to_string();
-                        let filepathstring = format!(
-                            "{}/{}/{}",
-                            self.paths.other_targets_dir_path, target_name, filename,
-                        );
-                        let filepath = std::path::Path::new(&filepathstring);
-                        let mut f = std::fs::OpenOptions::new()
-                            .write(true)
-                            .create(true)
-                            .open(filepath)
-                            .unwrap();
-                        f.write_all(&new_buf).unwrap();
-
-                        history_file
-                            .write_all(
-                                format!(
-                                    "{} {} {}\n{}",
-                                    target_name,
-                                    filename.len(),
-                                    "!",
-                                    filename.to_string()
-                                )
-                                .as_bytes(),
-                            )
-                            .unwrap();
-                    } else {
-                        history_file
-                            .write_all(format!("{} {}\n", target_name, new_buf.len()).as_bytes())
-                            .unwrap();
-                        history_file.write_all(&new_buf).unwrap();
-                    }
-
-                    // print new line after history entry
-                    history_file.write_all(&[b'\n']).unwrap();
+                    f.write_all(&new_buf).unwrap();
                 }
                 Err(GetterError::UnknownTarget) => {
-                    println!("Unknown target. Check settings 'text_targets' and 'other_targets' in config.")
+                    println!("Unknown target. Check setting 'targets_list' in config.")
                 }
             };
         }
