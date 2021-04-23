@@ -1,35 +1,38 @@
 #!/bin/bash
 
-mkfifo /tmp/asdd
-mkfifo /tmp/res_to_copy
+RCLIP_HOME="$HOME/.rclip"
 
 # send a signal to rclip that now we will set entry from history
+# TODO: must be called exact before calling xclip
 pkill -SIGUSR1 ^rclip$
 
-# will wait until something will be printed to res_to_copy, and then pipe it to
-# xclip. We need to do this BEFORE run rclip, because named pipe res_to_copy
-# must be ready to read before we will write something to it.
-copy_func() {
-    read TARGET_NAME
-    FILE_INPUT=""
-    if [[ $TARGET_NAME == "! "* ]];
-    then
-        TARGET_NAME="${TARGET_NAME:2}"
-        FILE_INPUT=~/.rclip/other_targets/$TARGET_NAME/$(cat)
-    fi
+cd $RCLIP_HOME
 
-    # nohup need to leave process running in the background (useful when call
-    # script by hotkey)
-    nohup xclip -i $FILE_INPUT -t $TARGET_NAME -sel c > /dev/null 2> /dev/null
+PICKED_FILE=$(gawk '
+BEGIN {
+    RS = ""
+    FS ="\n"
 }
-copy_func < /tmp/res_to_copy &
+BEGINFILE {
+    printf("%s:", FILENAME);
+};
+{
+    for (f=1; f<=NF; ++f) {printf("%s ", $f)};
+};
+ENDFILE {
+    printf("\n")
+};
+' $(rg --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. | awk -F : '{print $1}')
+#./UTF8_STRING/1619123453031
 
-# set asdd as stdin for rclip (which will be used for get picked index of entry)
-# redirect rclip stderr to res_to_copy (which will be used for
-#    getting original text entry)
-# redirect rclip stdout to fzf
-# redirect fzf stdout to asdd (which used for send index of picked entry to rclip)
-rclip list_and_set < /tmp/asdd 2> /tmp/res_to_copy | fzf --tac --with-nth 2.. > /tmp/asdd
+if [[ -z "$PICKED_FILE" ]]; then
+    exit 1
+fi
 
-rm /tmp/asdd
-rm /tmp/res_to_copy
+TARGET_NAME=$(dirname $PICKED_FILE)
+FILE_NAME="$RCLIP_HOME/$PICKED_FILE"
+
+# nohup need to leave process running in the background (useful when call
+# script by hotkey)
+nohup xclip -t $TARGET_NAME -i $FILE_NAME -sel c > /dev/null 2> /dev/null
+
