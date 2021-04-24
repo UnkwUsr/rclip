@@ -2,10 +2,6 @@
 
 RCLIP_HOME="$HOME/.rclip"
 
-# send a signal to rclip that now we will set entry from history
-# TODO: must be called exact before calling xclip
-pkill -SIGUSR1 ^rclip$
-
 cd $RCLIP_HOME
 
 PICKED_FILE=$(gawk '
@@ -31,6 +27,9 @@ fi
 
 TARGET_NAME=$(dirname $PICKED_FILE)
 FILE_NAME="$RCLIP_HOME/$PICKED_FILE"
+
+# send a signal to rclip that now we will set entry from history
+pkill -SIGUSR1 ^rclip$
 
 # nohup need to leave process running in the background (useful when call
 # script by hotkey)
