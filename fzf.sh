@@ -18,7 +18,7 @@ BEGINFILE {
 ENDFILE {
     printf("\n")
 };
-' $(rg --sort path --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. | awk -F : '{print $1}')
+' $(rg --sort path --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. --preview "cat {1}" | awk -F : '{print $1}')
 #./UTF8_STRING/1619123453031
 
 if [[ -z "$PICKED_FILE" ]]; then
