@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -z "$FZF_PROMPT" ]]; then
+    FZF_PROMPT="> "
+fi
+
 RCLIP_HOME="$HOME/.rclip"
 
 cd $RCLIP_HOME
@@ -18,7 +22,7 @@ BEGINFILE {
 ENDFILE {
     printf("\n")
 };
-' $(rg --sort path --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. --preview "cat {1}" | awk -F : '{print $1}')
+' $(rg --sort path --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. --preview "cat {1}" --prompt "$FZF_PROMPT" $FZF_FLAGS | awk -F : '{print $1}')
 #./UTF8_STRING/1619123453031
 
 if [[ -z "$PICKED_FILE" ]]; then
@@ -27,11 +31,4 @@ fi
 
 TARGET_NAME=$(dirname $PICKED_FILE)
 FILE_NAME="$RCLIP_HOME/$PICKED_FILE"
-
-# send a signal to rclip that now we will set entry from history
-pkill -SIGUSR1 ^rclip$
-
-# nohup need to leave process running in the background (useful when call
-# script by hotkey)
-nohup xclip -t $TARGET_NAME -i $FILE_NAME -sel c > /dev/null 2> /dev/null
 
