@@ -3,12 +3,12 @@
 Rclip - clipboard manager written in rust.
 
 ## Features
-* Save text clipboard history to file.
-* Save images history per file.
-* Print history list and pick what you want.
+* Each history entry saving per unique file
+* Easy to access each entry and write your own scripts
+* Easy to delete entries
 * Ability to set list of targets (in Xorg terms it means type of clipboard
-  entry) that will be saved.  (for example libreoffice formatted text).
-* Ability to use with fuzzy finders, like [fzf](https://github.com/junegunn/fzf) ([script](./fzf.sh) presented in the repository).
+  entry) that will be saved.  (for example libreoffice formatted text, images, standard text).
+* Ability to use with fuzzy finders, like [fzf](https://github.com/junegunn/fzf) ([fzf.sh](./fzf.sh) for example).
 * Setting clipboard entries is not handled by `rclip`. It's a work of different
   program, for example, `xclip`. So there is no errors maked in rclip :D.
 * Daemon does not handle clipboard history in RAM, so there little RAM consumption.
@@ -25,32 +25,8 @@ First thing you need to do - is run daemon:
 
 *(Recommended to add it to startup).*
 
-Next, when you want to see your history and pick some entry, just use subcommand `list_and_set`:
-
-`rclip list_and_set`
-
-Or use presented [script](./fzf.sh) with fzf integration (preferable).
-
-### About subcommand `list_and_set`:
-
-It prints all list of clipboard history entries (with new lines replaced to spaces, for easy to view or use in fuzzy finders, like `fzf`).
-
-List format:
-```
-ENTRY_INDEX ENTRY_FORMATTED_TEXT
-```
-
-... and then wait for input.
-Input should be a number, index of entry which we want to get.
-After program got input, it will print (this time to stderr (this was done for easy to use in scripts)) target_name (with `!` at start if real content of entry is stored in file) and on the next line original text of entry (or name of file where real entry data is stored).
-
-Format:
-```
-[!(is stored in file)] TARGET_NAME
-ENTRY_DATA/FILE_NAME
-```
-
-Also see `fzf.sh`, example of usage `rclip` with `fzf`.
+All saved history entries stored in `~/.rclip/{target_name}/`, each file per entry.
+For convenience you can use `./fzf.sh` script or write your own.
 
 ## Inspiration
 
