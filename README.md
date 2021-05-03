@@ -15,7 +15,7 @@ Rclip - clipboard manager written in rust.
 
 ## Installation
 
-*Not yet provided. You can use `cargo install --path ./` and copy `fzf.sh` to local bin folder*
+*Not yet provided. You can use `cargo install --path ./` and copy scripts to local bin folder*
 
 ## Usage
 
@@ -27,7 +27,7 @@ First thing you need to do - is run daemon:
 
 All saved history entries stored in `~/.rclip/{target_name}/`, each file per entry.
 
-For convenience you can use presented scripts `./copy.sh` and `./rm.sh` or write your own.
+For convenience you can use presented scripts `scripts/copy.sh` and `scripts/rm.sh` or write your own.
 
 ## Inspiration
 

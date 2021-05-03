@@ -5,7 +5,6 @@ if [[ -z "$FZF_PROMPT" ]]; then
 fi
 
 RCLIP_HOME="$HOME/.rclip"
-
 cd $RCLIP_HOME
 
 PICKED_FILE=$(gawk '
