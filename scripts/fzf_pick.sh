@@ -21,8 +21,7 @@ BEGINFILE {
 ENDFILE {
     printf("\n")
 };
-' $(rg --sort path --files-with-matches .) | fzf --tac --no-sort -d : --with-nth 2.. --preview "cat {1}" --prompt "$FZF_PROMPT" $FZF_FLAGS | awk -F : '{print $1}')
-#./UTF8_STRING/1619123453031
+' $(rg --sort path --files-with-matches .) | fzf --tac -d : --with-nth 2.. --preview "cat {1}" --prompt "$FZF_PROMPT" $FZF_FLAGS | awk -F : '{print $1}')
 
 if [[ -z "$PICKED_FILE" ]]; then
     exit 1
