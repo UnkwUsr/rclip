@@ -3,8 +3,8 @@
 Rclip - clipboard manager written in rust.
 
 ## Features
-* Each history entry saving per unique file.
-* Easy to access each entry and write your own scripts.
+* Each history entry saves in unique file.
+* Easy to access each entry and write your own scripts to manipulate them.
 * Easy to delete entries.
 * Ability to set list of targets (in Xorg terms it means type of clipboard.
   entry) that will be saved.  (for example libreoffice formatted text, images, standard text).
@@ -12,6 +12,8 @@ Rclip - clipboard manager written in rust.
 * Setting clipboard entries is not handled by `rclip`. It's a work of different
   program, for example, `xclip`. So there is no errors maked in rclip :D.
 * Daemon does not handle clipboard history in RAM, so there little RAM consumption.
+* Ability to pause rclip so it will not save next clipboard update (useful, for
+  example, when setting password from password manager)
 
 ## Installation
 
@@ -28,6 +30,10 @@ First thing you need to do - is run daemon:
 All saved history entries stored in `~/.rclip/{target_name}/`, each file per entry.
 
 For convenience you can use presented scripts `scripts/copy.sh` and `scripts/rm.sh` or write your own.
+
+If you use password manager, it will be useful to pause rclip, so just send signal SIGUSR1 and rclip will skip next clipboard update:
+
+`pkill -SIGUSR1 ^rclip$`
 
 ## Inspiration
 
