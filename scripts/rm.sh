@@ -1,10 +1,11 @@
 #!/bin/bash
 
-FZF_PROMPT="rm> "
-FZF_FLAGS="-m"
+RCLIP_HOME="$HOME/.rclip"
+
+export PICK_PURPOSE="rm"
+export FZF_FLAGS="-m"
 
 script_root=$(dirname $(realpath $(which $0)))
-source $script_root/fzf_pick.sh
+source $script_root/_pick.sh
 
-rm $FILE_NAME
-
+rm $PICKED_FILE

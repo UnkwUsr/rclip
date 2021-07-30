@@ -1,11 +1,10 @@
 #!/bin/bash
 
-if [[ -z "$FZF_PROMPT" ]]; then
-    FZF_PROMPT="> "
+if [[ -z "$PICK_PURPOSE" ]]; then
+    FZF_PROMPT="_undefined purpose_> "
+else
+    FZF_PROMPT="$PICK_PURPOSE> "
 fi
-
-RCLIP_HOME="$HOME/.rclip"
-cd $RCLIP_HOME
 
 PICKED_FILE=$(gawk '
 BEGIN {
@@ -21,12 +20,19 @@ BEGINFILE {
 ENDFILE {
     printf("\n")
 };
-' $(rg --sort path --files-with-matches .) | fzf --tac -d : --with-nth 2.. --preview "cat {1}" --prompt "$FZF_PROMPT" $FZF_FLAGS | awk -F : '{print $1}')
+' $(rg --sort path --files-with-matches . $RCLIP_HOME) | fzf --tac -d : --with-nth 2.. --preview "cat {1}" --prompt "$FZF_PROMPT" $FZF_FLAGS | awk -F : '{print $1}')
 
 if [[ -z "$PICKED_FILE" ]]; then
     exit 1
 fi
 
-TARGET_NAME=$(dirname $PICKED_FILE)
-FILE_NAME="$RCLIP_HOME/$PICKED_FILE"
-
+if [ $PICK_PURPOSE != "rm" ]; then
+    TARGET_NAME=""
+    temp_val=$(dirname $PICKED_FILE)
+    until [ $temp_val = $RCLIP_HOME ]
+    do
+        TARGET_NAME="$(basename $temp_val)/$TARGET_NAME"
+        temp_val=$(dirname $temp_val)
+    done
+    TARGET_NAME=${TARGET_NAME::-1}
+fi
