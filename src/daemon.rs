@@ -2,8 +2,10 @@ use crate::clipboard::ClipboardCtx;
 use crate::clipboard::Getter;
 use crate::clipboard::GetterError;
 use crate::config::Config;
+use crate::utils::get_hash;
 use crate::Paths;
-use signal_hook::{iterator::Signals, consts::signal::SIGUSR1};
+use signal_hook::{consts::signal::SIGUSR1, iterator::Signals};
+use std::collections::hash_map::DefaultHasher;
 use std::io::Write;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
@@ -38,26 +40,33 @@ impl<'a> Daemon<'a> {
             }
         });
 
+        let mut prev_hash: u64 = 0;
         loop {
             std::thread::sleep(::std::time::Duration::from_millis(100));
 
-            let mut new_buf = Vec::new();
-            match self.getter.get_wait(&mut new_buf) {
+            let mut clipboard_data = Vec::new();
+            match self.getter.get_wait(&mut clipboard_data) {
                 Ok(target_name) => {
-                    // TODO: check for duplicates
-
                     if dooneskip.load(Ordering::Relaxed) {
                         println!("[rclip] Skip because of got signal for skip");
                         dooneskip.store(false, Ordering::Release);
                         continue;
                     }
 
-                    if new_buf.len() < self.config.min_length {
+                    if clipboard_data.len() < self.config.min_length {
                         println!("[rclip] Skip due to config setting 'min_length'");
                         continue;
                     }
 
-                    println!("[rclip] Clipboard changed. Len: {}", new_buf.len());
+                    let mut hasher = DefaultHasher::new();
+                    let new_hash = get_hash(&clipboard_data, &mut hasher);
+                    if new_hash == prev_hash {
+                        println!("[rclip] Found duplicate");
+                        continue;
+                    }
+                    prev_hash = new_hash;
+
+                    println!("[rclip] Clipboard changed. Len: {}", clipboard_data.len());
 
                     let filename = SystemTime::now()
                         .duration_since(UNIX_EPOCH)
@@ -74,7 +83,7 @@ impl<'a> Daemon<'a> {
                         .create(true)
                         .open(filepath)
                         .unwrap();
-                    f.write_all(&new_buf).unwrap();
+                    f.write_all(&clipboard_data).unwrap();
                 }
                 Err(GetterError::UnknownTarget) => {
                     eprintln!("[rclip] Unknown target. Check setting 'targets_list' in config.")

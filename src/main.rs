@@ -4,6 +4,7 @@ mod clipboard;
 mod config;
 mod daemon;
 mod paths;
+mod utils;
 
 use clipboard::ClipboardCtx;
 use config::Config;
