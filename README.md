@@ -5,15 +5,18 @@ clipboard updates and save them each per unique file.
 
 ## Features
 * Each history entry saves in unique file.
-* Easy to access each entry and write your own scripts to manipulate them.
-* Easy to delete entries.
 * Daemon does not handle clipboard history in RAM, so there is little memory consumption.
+* Checking for duplicates (and skipping them).
 * Ability to set list of targets (in Xorg terms it means type of clipboard
   entry) that will be saved. (for example libreoffice formatted text, images, standard text).
 * Ability to set minimal length of entry you want to save.
 * Ability to pause rclip so it will not save next clipboard update (useful, for
   example, when setting password from password manager).
-* Ability to use with fuzzy finders, like [fzf](https://github.com/junegunn/fzf) (script example presented).
+
+### Bonus
+* Easy to access each entry and write your own scripts to manipulate them.
+* Easy to delete entries.
+* Ability to use with fuzzy finders, like [fzf](https://github.com/junegunn/fzf) (scripts examples presented).
 
 ## Installation
 
