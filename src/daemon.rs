@@ -3,7 +3,7 @@ use crate::clipboard::Getter;
 use crate::clipboard::GetterError;
 use crate::config::Config;
 use crate::Paths;
-use signal_hook::{iterator::Signals, SIGUSR1};
+use signal_hook::{iterator::Signals, consts::signal::SIGUSR1};
 use std::io::Write;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
@@ -21,9 +21,9 @@ impl<'a> Daemon<'a> {
         let getter = Getter::new(config, &clipboard_ctx);
 
         Daemon {
-            config,
             getter,
             paths,
+            config,
         }
     }
 
@@ -31,7 +31,7 @@ impl<'a> Daemon<'a> {
         let dooneskip = Arc::new(AtomicBool::new(false));
         let dooneskip_shared = dooneskip.clone();
 
-        let signals = Signals::new(&[SIGUSR1]).unwrap();
+        let mut signals = Signals::new(&[SIGUSR1]).unwrap();
         std::thread::spawn(move || {
             for _ in signals.forever() {
                 dooneskip_shared.store(true, Ordering::Release);
@@ -47,17 +47,17 @@ impl<'a> Daemon<'a> {
                     // TODO: check for duplicates
 
                     if dooneskip.load(Ordering::Relaxed) {
-                        println!("skip due to 'set from history'");
+                        println!("[rclip] Skip because of got signal for skip");
                         dooneskip.store(false, Ordering::Release);
                         continue;
                     }
 
                     if new_buf.len() < self.config.min_length {
-                        println!("skip due to 'too short'");
+                        println!("[rclip] Skip due to config setting 'min_length'");
                         continue;
                     }
 
-                    println!("Clipboard changed. Len: {}", new_buf.len());
+                    println!("[rclip] Clipboard changed. Len: {}", new_buf.len());
 
                     let filename = SystemTime::now()
                         .duration_since(UNIX_EPOCH)
@@ -77,7 +77,7 @@ impl<'a> Daemon<'a> {
                     f.write_all(&new_buf).unwrap();
                 }
                 Err(GetterError::UnknownTarget) => {
-                    println!("Unknown target. Check setting 'targets_list' in config.")
+                    eprintln!("[rclip] Unknown target. Check setting 'targets_list' in config.")
                 }
             };
         }

@@ -23,7 +23,9 @@ clipboard updates and save them each per unique file.
 
 First thing you need to do - is run daemon:
 
-`rclip daemon`
+```
+rclip daemon
+```
 
 *(Recommended to add it to startup).*
 
@@ -41,7 +43,9 @@ operate with images (using `feh`). To select image in feh just press "enter" key
 If you use password manager, it will be useful to pause rclip, so just send
 signal SIGUSR1 and rclip will skip next clipboard update:
 
-`pkill -SIGUSR1 ^rclip$`
+```
+pkill -SIGUSR1 ^rclip$
+```
 
 ## Configuration
 

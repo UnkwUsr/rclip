@@ -16,7 +16,6 @@ fn main() {
         .version("0.1.0")
         .author("UnkwUsr <ktoto2707043 at gmail dot cum>")
         .about("Clipboard manager written in Rust")
-        // .arg(Arg::with_name("daemon").short("d").long("daemon").help("Run daemon of clipboard manager"))
         .subcommand(SubCommand::with_name("daemon").about("Run daemon of clipboard manager"))
         .get_matches();
 

@@ -78,7 +78,7 @@ impl<'a> Getter<'a> {
                     ProcessState::SkipEvent
                 }
                 _ => {
-                    println!("unknown etype {}", etype);
+                    eprintln!("[rclip] Unknown etype: {}", etype);
                     ProcessState::SkipEvent
                 }
             }
