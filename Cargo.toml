@@ -2,6 +2,15 @@
 name = "rclip"
 version = "0.1.0"
 authors = ["UnkwUsr <ktoto2707043@gmail.com>"]
+description = """
+Rclip is a clipboard manager with ability to save different entry types (text,
+images, etc.). It's just a daemon which look for clipboard updates and save
+them each per unique file.
+"""
+repository = "https://github.com/UnkwUsr/rclip"
+keywords = ["clipboard", "daemon", "history", "manager", "fzf"]
+categories = ["command-line-utilities"]
+license = "MIT"
 edition = "2018"
 
 
