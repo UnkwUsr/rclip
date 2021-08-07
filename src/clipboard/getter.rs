@@ -74,11 +74,12 @@ impl<'a> Getter<'a> {
                     }
                 }
                 xcb::PROPERTY_NOTIFY => {
-                    // println!("Not yet implemented");
+                    // should we implement it? It's just work
+                    // eprintln!("[rclip] Not yet implemented");
                     ProcessState::SkipEvent
                 }
                 _ => {
-                    eprintln!("[rclip] Unknown etype: {}", etype);
+                    // eprintln!("[rclip] Unknown etype: {}", etype);
                     ProcessState::SkipEvent
                 }
             }
@@ -171,7 +172,10 @@ impl<'a> Getter<'a> {
                     }
                     ProcessState::SkipEvent => continue,
                 },
-                None => continue,
+                None => {
+                    eprintln!("[rclip] X connection broken");
+                    std::process::exit(0);
+                },
             };
         }
 
