@@ -137,7 +137,7 @@ impl<'a> Getter<'a> {
         self.ctx.connection.flush();
     }
 
-    // will wait until clibpoard changed
+    /// Will wait until clibpoard changed. 'buf' parameter is where result buffer will be written.
     pub fn get_wait(&mut self, buf: &mut Vec<u8>) -> Result<String, GetterError> {
         self.prepare_for_get();
 

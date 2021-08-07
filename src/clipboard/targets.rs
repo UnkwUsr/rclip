@@ -3,8 +3,12 @@ use crate::config::Config;
 use xcb::Atom;
 use xcb::Connection;
 
-// target is type of returned result. May be text, image (png, jpeg, etc), or any other for
-// example like libreoffice formatted text
+/// Target is a type of returned result. May be text, image (png, jpeg, etc), or any other for
+/// example like libreoffice formatted text.
+///
+/// Xorg also provide common target named TARGETS. This target return list of all supported types
+/// for current clipboard. If clipboard wiped (like when program that handled previous clipboard is
+/// killed), then even TARGETS target not exist for current clipboard.
 pub struct Target {
     pub atom: Atom,
     pub name: String,
