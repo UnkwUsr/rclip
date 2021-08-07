@@ -1,5 +1,5 @@
 [package]
-name = "rclip"
+name = "rclipd"
 version = "0.1.0"
 authors = ["UnkwUsr <ktoto2707043@gmail.com>"]
 description = """
