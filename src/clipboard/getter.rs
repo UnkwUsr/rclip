@@ -162,7 +162,8 @@ impl<'a> Getter<'a> {
                             // empty clipboard. Probably just application that handled last
                             // clipboard was closed
 
-                            break;
+                            // do not return empty result, so continue waiting for clipboard
+                            return self.get_wait(buf);
                         }
                     },
                     ProcessState::GettingLongValue | ProcessState::ClipboardChanged => {
