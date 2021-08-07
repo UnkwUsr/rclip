@@ -20,7 +20,8 @@ clipboard updates and save them each per unique file.
 
 ## Installation
 
-*Not yet provided. You can use `cargo install --path ./` and copy scripts to local bin folder*
+*Not yet provided. You can use `cargo install --path ./`. Also see
+[./install_scripts.sh](./install_scripts.sh) for installing scripts.*
 
 ## Usage
 
