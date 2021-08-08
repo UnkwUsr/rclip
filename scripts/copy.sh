@@ -4,7 +4,7 @@ RCLIP_HOME="$HOME/.rclip"
 
 export PICK_PURPOSE="copy"
 
-script_root=$(dirname $(realpath $(which $0)))
+script_root=$(dirname "$0")/../share/rclip
 source $script_root/_pick.sh
 
 # send a signal to rclip that now we will set entry from history

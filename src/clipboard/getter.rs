@@ -176,7 +176,7 @@ impl<'a> Getter<'a> {
                 None => {
                     eprintln!("[rclip] X connection broken");
                     std::process::exit(0);
-                },
+                }
             };
         }
 
