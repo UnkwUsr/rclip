@@ -26,10 +26,10 @@ if [[ -z "$PICKED_FILE" ]]; then
     exit 1
 fi
 
-if [ $PICK_PURPOSE != "rm" ]; then
+if [ "$PICK_PURPOSE" != "rm" ]; then
     TARGET_NAME=""
     temp_val=$(dirname $PICKED_FILE)
-    until [ $temp_val = $RCLIP_HOME ]
+    until [ "$temp_val" = "$RCLIP_HOME" ] || [ "$temp_val" = "." ]
     do
         TARGET_NAME="$(basename $temp_val)/$TARGET_NAME"
         temp_val=$(dirname $temp_val)
