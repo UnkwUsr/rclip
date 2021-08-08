@@ -20,7 +20,11 @@ clipboard updates and save them each per unique file.
 
 ## Installation
 
-Can be installed with cargo:
+### On Arch Linux
+
+AUR package: [rclip-git](https://aur.archlinux.org/packages/rclip-git/)
+
+### With cargo
 
 ```
 cargo install rclipd
@@ -43,8 +47,8 @@ All saved history entries stored in `~/.rclip/{target_name}/`, one file per entr
 
 ### Copying and removing entries
 
-For convenience you can use presented scripts `scripts/copy.sh` and
-`scripts/rm.sh` or write your own.  Mentioned scripts by default operate with
+For convenience you can use provided scripts `scripts/copy.sh` (or `rclip_copy` if installed package) and
+`scripts/rm.sh` (or `rclip_rm`) or write your own.  Mentioned scripts by default operate with
 text entries (using `fzf`), but you can pass argument `image` and it will
 operate with images (using `feh`). To select image in feh just press "enter" key.
 
