@@ -52,6 +52,8 @@ For convenience you can use provided scripts `scripts/copy.sh` (or `rclip_copy` 
 text entries (using `fzf`), but you can pass argument `image` and it will
 operate with images (using `feh`). To select image in feh just press "enter" key.
 
+Note: `feh` have default bind `ctrl+delete` which delete current file. ...And this work in `rclip_copy image`.
+
 ### Pause saving entries
 
 If you use password manager, it will be useful to pause rclip, so just send
