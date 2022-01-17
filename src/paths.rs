@@ -1,6 +1,5 @@
 use crate::config::Config;
 
-const HISTORY_DIR: &str = ".rclip";
 const CONFIG_DIR: &str = "rclip";
 const CONFIG_FILE: &str = "config.toml";
 
@@ -12,7 +11,7 @@ pub struct Paths {
 
 impl Paths {
     pub fn new() -> Self {
-        let history_dir_path = format!("{}/{}", dirs::home_dir().unwrap().display(), HISTORY_DIR);
+        let history_dir_path = format!("{}/{}", dirs::data_dir().unwrap().display(), CONFIG_DIR);
         std::fs::create_dir_all(&history_dir_path).unwrap();
 
         let config_dir_path = format!("{}/{}", dirs::config_dir().unwrap().display(), CONFIG_DIR);

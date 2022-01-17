@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RCLIP_HOME="$HOME/.rclip"
+RCLIP_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/rclip"
 
 export PICK_PURPOSE="copy"
 

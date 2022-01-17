@@ -6,7 +6,7 @@ clipboard updates and save them each per unique file.
 ## Features
 * Each history entry saves in unique file.
 * Daemon does not handle clipboard history in RAM, so there is little memory consumption.
-* Checking for duplicates (and skipping them).
+* Checking for duplicates (and skipping them). P.S. it compares only last clipboard entry with current new.
 * Ability to set list of targets (in Xorg terms it means type of clipboard
   entry) that will be saved. (for example libreoffice formatted text, images, standard text).
 * Ability to set minimal length of entry you want to save.
@@ -43,11 +43,12 @@ rclip daemon
 
 *(Recommended to add it to startup).*
 
-All saved history entries stored in `~/.rclip/{target_name}/`, one file per entry.
+All saved history entries stored in `~/.local/share/rclip/{target_name}/`
+(where `~/.local/share` follows to $XDG_DATA_HOME by XDG specification), one file per entry.
 
 ### Copying and removing entries
 
-For convenience you can use provided scripts `scripts/copy.sh` (or `rclip_copy` if installed package) and
+For convenience you can use provided scripts `scripts/copy.sh` (or `rclip_copy` if installed from package) and
 `scripts/rm.sh` (or `rclip_rm`) or write your own.  Mentioned scripts by default operate with
 text entries (using `fzf`), but you can pass argument `image` and it will
 operate with images (using `feh`). To select image in feh just press "enter" key.
@@ -84,4 +85,3 @@ targets_list = [
 
 Inspired by [greenclip](https://github.com/erebe/greenclip), a clipboard
 manager written in haskell.
-
