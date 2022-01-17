@@ -14,7 +14,7 @@ use paths::Paths;
 fn main() {
     // TODO: detect if another program instanec already launched
     let arg_matches = App::new("rclip")
-        .version("0.1.0")
+        .version("0.2.0")
         .author("UnkwUsr <ktoto2707043 at gmail dot cum>")
         .about("Clipboard manager written in Rust")
         .subcommand(SubCommand::with_name("daemon").about("Run daemon of clipboard manager"))

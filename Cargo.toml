@@ -1,6 +1,6 @@
 [package]
 name = "rclipd"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["UnkwUsr <ktoto2707043@gmail.com>"]
 description = """
 Rclip is a clipboard manager with ability to save different entry types (text,
