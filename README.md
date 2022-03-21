@@ -4,6 +4,7 @@ Rclip - clipboard manager written in rust. It's just a daemon which look for
 clipboard updates and save them each per unique file.
 
 ## Features
+
 * Each history entry saves in unique file.
 * Daemon does not handle clipboard history in RAM, so there is little memory consumption.
 * Checking for duplicates (and skipping them). P.S. it compares only last clipboard entry with current new.
@@ -14,6 +15,7 @@ clipboard updates and save them each per unique file.
   example, when setting password from password manager).
 
 ### Bonus
+
 * Easy to access each entry and write your own scripts to manipulate them.
 * Easy to delete entries.
 * Ability to use with fuzzy finders, like [fzf](https://github.com/junegunn/fzf) (scripts examples presented).
@@ -26,9 +28,7 @@ AUR package: [rclip-git](https://aur.archlinux.org/packages/rclip-git/)
 
 ### With cargo
 
-```
-cargo install rclipd
-```
+    cargo install rclipd
 
 Also see [./install_scripts.sh](./install_scripts.sh) for installing provided
 scripts.
@@ -37,9 +37,7 @@ scripts.
 
 First thing you need to do - is run daemon:
 
-```
-rclip daemon
-```
+    rclip daemon
 
 *(Recommended to add it to startup).*
 
@@ -60,9 +58,7 @@ Note: `feh` have default bind `ctrl+delete` which delete current file. ...And th
 If you use password manager, it will be useful to pause rclip, so just send
 signal SIGUSR1 and rclip will skip next clipboard update:
 
-```
-pkill -SIGUSR1 ^rclip$
-```
+    pkill -SIGUSR1 ^rclip$
 
 ## Configuration
 
@@ -72,12 +68,10 @@ There is only two settings:
 
 1. `targets_list` - is a list of targets you want to save. Example (default):
 
-```
-targets_list = [
-    'image/png',
-    'UTF8_STRING',
-]
-```
+        targets_list = [
+            'image/png',
+            'UTF8_STRING',
+        ]
 
 2. `min_length` - is a minimal length of entry you want to save. By default is `3`.
 
