@@ -22,9 +22,13 @@ clipboard updates and save them each per unique file.
 
 ### Wayland support?
 
-Native support is not planned, but it seems to work nice through `xwayland`.
+~~Native support is not planned as it seems to work nice through `xwayland`.
 I'm finally migrated to wayland and it just works. I'm using `rclip` on daily
-basis so going to fix problems with wayland if they occur.
+basis so going to fix problems with wayland if they occur.~~
+
+I'm planning to add wayland support. It seemed to work nice through `xwayland`,
+but turned out it is not (it does not detects clipboard change until one of
+`xwayland` windows focused).
 
 ## Installation
 
@@ -80,10 +84,12 @@ There is only two settings:
 
 1. `targets_list` - is a list of targets you want to save. Example (default):
 
-        targets_list = [
-            'image/png',
-            'UTF8_STRING',
-        ]
+    ```
+    targets_list = [
+      'image/png',
+      'UTF8_STRING',
+    ]
+    ```
 
 2. `min_length` - is a minimal length of entry you want to save. By default is `3`.
 
